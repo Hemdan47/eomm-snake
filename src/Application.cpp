@@ -8,14 +8,14 @@ void Application::run() {
     InitWindow(2 * config.offset + config.cell_size * config.cell_count,
         2 * config.offset + config.cell_size * config.cell_count,
         config.title);
-    SetTargetFPS(60);
+    SetTargetFPS(config.target_fps);
 
     game = std::make_unique<Game>(config);
 
     while (!WindowShouldClose()) {
         BeginDrawing();
 
-        if (event_triggered(0.1)) {
+        if (event_triggered(config.speed)) {
             game->update();
         }
 
@@ -29,17 +29,22 @@ void Application::run() {
 
 
         ClearBackground(config.light_sand);
-        DrawRectangleLinesEx(Rectangle{(float)config.offset - 5,
-                                       (float)config.offset - 5,
-                                    (float)config.cell_size * config.cell_count + 10,
-                                    (float)config.cell_size * config.cell_count + 10},
-                                  5,
+        DrawRectangleLinesEx(Rectangle{(float)config.offset - (float)config.board_frame_offset,
+                                       (float)config.offset - (float)config.board_frame_offset,
+                                       (float)config.cell_size * config.cell_count + (float)config.board_frame_extra_size,
+                                       (float)config.cell_size * config.cell_count + (float)config.board_frame_extra_size},
+                                  (float)config.board_frame_line_thickness,
                                           config.burnt_orange);
-        DrawText("Eomm Snake", config.offset - 5, 20, 40, config.burnt_orange);
+        DrawText("Eomm Snake",
+                 (int)config.offset - config.board_frame_offset,
+                 config.ui_text_y,
+                 config.ui_text_size,
+                 config.burnt_orange);
         DrawText(TextFormat("%i", (int)game->get_score()),
-                            config.offset - 5,
-                            config.offset + config.cell_size * config.cell_count + 10,
-                            40, config.burnt_orange);
+                 (int)config.offset - config.board_frame_offset,
+                 (int)(config.offset + config.cell_size * config.cell_count + config.board_frame_extra_size),
+                 config.ui_text_size,
+                 config.burnt_orange);
         game->draw();
 
         EndDrawing();

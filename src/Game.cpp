@@ -42,6 +42,7 @@ bool Game::check_collision_with_food() {
     if (Vector2Equals(snake_body.front(), food->get_position())){
         food->set_position(generate_random_position(snake_body));
         score++;
+        config.increase_speed();
         PlaySound(eat_sound);
         return true;
     }
@@ -77,6 +78,7 @@ void Game::game_over() {
     food->set_position(generate_random_position(snake_body));
     running = false;
     score = 0;
+    config.reset_speed();
     PlaySound(wall_sound);
 }
 
