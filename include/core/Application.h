@@ -2,9 +2,11 @@
 #define EOMM_SNAKE_APPLICATION_H
 #include <memory>
 #include <raylib.h>
-#include "../Config.h"
-#include "../Controller.h"
-#include "../Game.h"
+#include "Config.h"
+#include "controllers/GameController.h"
+#include "controllers/MenuController.h"
+#include "Game.h"
+#include "Menu.h"
 
 
 class Application {
@@ -13,12 +15,21 @@ public:
     void run();
 
 private:
+    enum class Scene {
+        Menu,
+        Game
+    };
+
     bool event_triggered(double interval);
+    std::unique_ptr<Game> create_game_for_selected_mode(GameMode mode);
 
 
     Config config;
     std::unique_ptr<Game> game;
-    std::unique_ptr<Controller> controller;
+    std::unique_ptr<Menu> menu;
+    std::unique_ptr<GameController> game_controller;
+    std::unique_ptr<MenuController> menu_controller;
+    Scene current_scene;
     double last_updated_time;
 };
 

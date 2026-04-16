@@ -1,6 +1,5 @@
 #ifndef EOMM_SNAKE_FOOD_H
 #define EOMM_SNAKE_FOOD_H
-
 #include <deque>
 #include "Config.h"
 #include "raylib.h"

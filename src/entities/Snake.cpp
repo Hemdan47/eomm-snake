@@ -19,8 +19,17 @@ void Snake::draw() {
     }
 }
 
-void Snake::update(bool add = false) {
-    body.push_front(Vector2Add(body.front() , direction));
+void Snake::update(bool add = false, bool wrap = false) {
+    Vector2 head = Vector2Add(body.front() , direction);
+    Vector2 mod = {(float)config.cell_count , (float)config.cell_count};
+    if (wrap) {
+        head = {
+            fmodf(fmodf(head.x, mod.x) + mod.x , mod.x),
+            fmodf(fmodf(head.y, mod.y) + mod.y , mod.y)
+        };
+    }
+
+    body.push_front(head);
     if (!add) {
         body.pop_back();
     }

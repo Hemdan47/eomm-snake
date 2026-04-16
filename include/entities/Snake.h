@@ -9,7 +9,7 @@ class Snake {
 public:
     explicit Snake(Config &config);
     void draw();
-    void update(bool add);
+    void update(bool add , bool wrap);
     void reset();
     std::deque<Vector2> get_body() const;
     Vector2 get_direction() const;

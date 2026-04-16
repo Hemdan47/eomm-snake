@@ -1,7 +1,14 @@
-#include "Application.h"
+#include "core/Application.h"
 
-Application::Application() : last_updated_time(0),
-                             controller(std::make_unique<Controller>()){}
+#include "modes/ClassicMode.h"
+#include "modes/WrapAroundMode.h"
+#include "ui/SceneFrame.h"
+
+Application::Application() : game_controller(std::make_unique<GameController>()),
+                             menu(std::make_unique<Menu>(config)),
+                             menu_controller(std::make_unique<MenuController>()),
+                             current_scene(Scene::Menu),
+                             last_updated_time(0){}
 
 
 void Application::run() {
@@ -10,42 +17,60 @@ void Application::run() {
         config.title);
     SetTargetFPS(config.target_fps);
 
-    game = std::make_unique<Game>(config);
-
     while (!WindowShouldClose()) {
         BeginDrawing();
-
-        if (event_triggered(config.speed)) {
-            game->update();
-        }
-
-        bool is_running = game->is_running();
-        Vector2 current_direction = game->get_snake_current_direction();
-        Vector2 direction = controller->handle_movement(current_direction,
-                                                        is_running);
-
-        game->set_running(is_running);
-        game->set_snake_direction(direction);
-
-
         ClearBackground(config.light_sand);
-        DrawRectangleLinesEx(Rectangle{(float)config.offset - (float)config.board_frame_offset,
-                                       (float)config.offset - (float)config.board_frame_offset,
-                                       (float)config.cell_size * config.cell_count + (float)config.board_frame_extra_size,
-                                       (float)config.cell_size * config.cell_count + (float)config.board_frame_extra_size},
-                                  (float)config.board_frame_line_thickness,
-                                          config.burnt_orange);
-        DrawText("Eomm Snake",
-                 (int)config.offset - config.board_frame_offset,
-                 config.ui_text_y,
-                 config.ui_text_size,
-                 config.burnt_orange);
-        DrawText(TextFormat("%i", (int)game->get_score()),
-                 (int)config.offset - config.board_frame_offset,
-                 (int)(config.offset + config.cell_size * config.cell_count + config.board_frame_extra_size),
-                 config.ui_text_size,
-                 config.burnt_orange);
-        game->draw();
+
+        switch (current_scene) {
+            case Scene::Game:
+                if (!game) {
+                    current_scene = Scene::Menu;
+                    break;
+                }
+
+                if (event_triggered(config.speed)) {
+                    bool was_running = game->is_running();
+                    game->update();
+
+                    if (was_running && !game->is_running()) {
+                        current_scene = Scene::Menu;
+                        game.reset();
+                        break;
+                    }
+                }
+
+                if (game) {
+                    bool is_running = game->is_running();
+                    Vector2 current_direction = game->get_snake_current_direction();
+                    Vector2 direction = game_controller->handle_movement(current_direction, is_running);
+
+                    game->set_running(is_running);
+                    game->set_snake_direction(direction);
+
+                    SceneFrame::draw(config);
+                    DrawText(TextFormat("%i", (int)game->get_score()),
+                             (int)config.offset - config.board_frame_offset,
+                             (int)(config.offset + config.cell_size * config.cell_count + config.board_frame_extra_size),
+                             config.ui_text_size,
+                             config.burnt_orange);
+                    game->draw();
+                }
+                break;
+
+            case Scene::Menu: {
+                if (menu) {
+                    menu->draw();
+                    menu->update(*menu_controller);
+
+                    if (menu->consume_start_request()) {
+                        game = create_game_for_selected_mode(menu->get_selected_mode());
+                        current_scene = Scene::Game;
+                        last_updated_time = GetTime();
+                    }
+                }
+                break;
+            }
+        }
 
         EndDrawing();
     }
@@ -61,4 +86,12 @@ bool Application::event_triggered(double interval) {
         return true;
     }
     return false;
+}
+
+std::unique_ptr<Game> Application::create_game_for_selected_mode(GameMode mode) {
+    if (mode == GameMode::WrapAround) {
+        return std::make_unique<WrapAroundMode>(config);
+    }
+
+    return std::make_unique<ClassicMode>(config);
 }

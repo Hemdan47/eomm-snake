@@ -2,15 +2,15 @@
 #define EOMM_SNAKE_GAME_H
 #include <memory>
 
-#include "../Config.h"
-#include "../entities/Food.h"
-#include "../entities/Snake.h"
+#include "Config.h"
+#include "entities/Food.h"
+#include "entities/Snake.h"
 
 class Game {
 public:
     explicit Game(Config &config);
     ~Game();
-    void update();
+    virtual void update() = 0;
     void draw();
     Vector2 get_snake_current_direction();
     void set_snake_direction(Vector2 direction);
@@ -18,9 +18,8 @@ public:
     void set_running(bool running);
     std::size_t get_score();
 
-private:
+protected:
     bool check_collision_with_food();
-    bool check_collision_with_wall();
     void game_over();
     bool check_collision_with_tail();
     Vector2 generate_random_cell();
