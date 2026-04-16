@@ -2,9 +2,9 @@
 #define EOMM_SNAKE_GAME_H
 #include <memory>
 
-#include "Config.h"
-#include "entities/Food.h"
-#include "entities/Snake.h"
+#include "../Config.h"
+#include "../entities/Food.h"
+#include "../entities/Snake.h"
 
 class Game {
 public:

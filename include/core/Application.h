@@ -2,9 +2,9 @@
 #define EOMM_SNAKE_APPLICATION_H
 #include <memory>
 #include <raylib.h>
-#include "Config.h"
-#include "Controller.h"
-#include "Game.h"
+#include "../Config.h"
+#include "../Controller.h"
+#include "../Game.h"
 
 
 class Application {
