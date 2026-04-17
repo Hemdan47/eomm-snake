@@ -15,7 +15,7 @@ enum class GameMode {
 class Menu {
 public:
     explicit Menu(Config &config);
-    void update(MenuController &controller);
+    void update();
     void draw() const;
     bool consume_start_request();
     GameMode get_selected_mode() const;
@@ -29,6 +29,7 @@ private:
     Config &config;
     GameMode selected_mode;
     std::vector<MenuButtonDescriptor> buttons;
+    MenuController controller;
     bool start_requested;
 };
 

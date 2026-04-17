@@ -21,6 +21,15 @@ Game::~Game() {
     CloseAudioDevice();
 }
 
+void Game::handle_input() {
+    bool is_running = running;
+    Vector2 current_direction = snake->get_direction();
+    Vector2 direction = controller.handle_movement(current_direction, is_running);
+
+    running = is_running;
+    snake->set_direction(direction);
+}
+
 
 void Game::draw() {
     food->draw();

@@ -11,7 +11,7 @@ Menu::Menu(Config &config)
     buttons.push_back(create_menu_button("Wrap Around Mode", 2, MenuAction::SelectWrapAroundMode));
 }
 
-void Menu::update(MenuController &controller) {
+void Menu::update() {
     MenuAction action = controller.handle_menu(buttons);
 
     switch (action) {

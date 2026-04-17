@@ -4,9 +4,7 @@
 #include "modes/WrapAroundMode.h"
 #include "ui/SceneFrame.h"
 
-Application::Application() : game_controller(std::make_unique<GameController>()),
-                             menu(std::make_unique<Menu>(config)),
-                             menu_controller(std::make_unique<MenuController>()),
+Application::Application() : menu(std::make_unique<Menu>(config)),
                              current_scene(Scene::Menu),
                              last_updated_time(0){}
 
@@ -40,12 +38,7 @@ void Application::run() {
                 }
 
                 if (game) {
-                    bool is_running = game->is_running();
-                    Vector2 current_direction = game->get_snake_current_direction();
-                    Vector2 direction = game_controller->handle_movement(current_direction, is_running);
-
-                    game->set_running(is_running);
-                    game->set_snake_direction(direction);
+                    game->handle_input();
 
                     SceneFrame::draw(config);
                     DrawText(TextFormat("%i", (int)game->get_score()),
@@ -60,7 +53,7 @@ void Application::run() {
             case Scene::Menu: {
                 if (menu) {
                     menu->draw();
-                    menu->update(*menu_controller);
+                    menu->update();
 
                     if (menu->consume_start_request()) {
                         game = create_game_for_selected_mode(menu->get_selected_mode());

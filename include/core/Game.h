@@ -3,6 +3,7 @@
 #include <memory>
 
 #include "Config.h"
+#include "controllers/GameController.h"
 #include "entities/Food.h"
 #include "entities/Snake.h"
 
@@ -11,6 +12,7 @@ public:
     explicit Game(Config &config);
     ~Game();
     virtual void update() = 0;
+    void handle_input();
     void draw();
     Vector2 get_snake_current_direction();
     void set_snake_direction(Vector2 direction);
@@ -32,6 +34,7 @@ protected:
     std::unique_ptr<Food> food;
     bool running;
     std::size_t score;
+    GameController controller;
     Sound eat_sound;
     Sound wall_sound;
 };

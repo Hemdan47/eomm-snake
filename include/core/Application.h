@@ -3,8 +3,6 @@
 #include <memory>
 #include <raylib.h>
 #include "Config.h"
-#include "controllers/GameController.h"
-#include "controllers/MenuController.h"
 #include "Game.h"
 #include "Menu.h"
 
@@ -27,8 +25,6 @@ private:
     Config config;
     std::unique_ptr<Game> game;
     std::unique_ptr<Menu> menu;
-    std::unique_ptr<GameController> game_controller;
-    std::unique_ptr<MenuController> menu_controller;
     Scene current_scene;
     double last_updated_time;
 };
