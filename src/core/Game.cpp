@@ -5,12 +5,12 @@
 Game::Game(Config &config) : config(config),
                              snake(std::make_unique<Snake>(config)),
                              running(true),
-                             score(0)
+                             score(0),
+                             last_score(0)
 {
     std::deque<Vector2> snake_body = snake->get_body();
     food = std::make_unique<Food>(config , generate_random_position(snake_body));
 
-    InitAudioDevice();
     eat_sound = LoadSound("resources/sounds/eat.mp3");
     wall_sound = LoadSound("resources/sounds/wall.mp3");
 }
@@ -18,7 +18,6 @@ Game::Game(Config &config) : config(config),
 Game::~Game() {
     UnloadSound(eat_sound);
     UnloadSound(wall_sound);
-    CloseAudioDevice();
 }
 
 void Game::handle_input() {
@@ -61,6 +60,7 @@ bool Game::check_collision_with_tail() {
 }
 
 void Game::game_over() {
+    last_score = score;
     std::deque<Vector2> snake_body = snake->get_body();
     snake->reset();
     food->set_position(generate_random_position(snake_body));
@@ -114,5 +114,9 @@ void Game::set_running(bool running) {
 
 std::size_t Game::get_score() {
     return score;
+}
+
+std::size_t Game::get_last_score() const {
+    return last_score;
 }
 

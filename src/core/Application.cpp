@@ -13,6 +13,7 @@ void Application::run() {
     InitWindow(2 * config.offset + config.cell_size * config.cell_count,
         2 * config.offset + config.cell_size * config.cell_count,
         config.title);
+    InitAudioDevice();
     SetTargetFPS(config.target_fps);
 
     while (!WindowShouldClose()) {
@@ -31,8 +32,10 @@ void Application::run() {
                     game->update();
 
                     if (was_running && !game->is_running()) {
+                        if (menu) {
+                            menu->add_score(game->get_last_score());
+                        }
                         current_scene = Scene::Menu;
-                        game.reset();
                         break;
                     }
                 }
@@ -69,6 +72,9 @@ void Application::run() {
     }
 
     game.reset();
+    if (IsAudioDeviceReady()) {
+        CloseAudioDevice();
+    }
     CloseWindow();
 }
 

@@ -19,6 +19,7 @@ public:
     bool is_running();
     void set_running(bool running);
     std::size_t get_score();
+    std::size_t get_last_score() const;
 
 protected:
     bool check_collision_with_food();
@@ -34,6 +35,7 @@ protected:
     std::unique_ptr<Food> food;
     bool running;
     std::size_t score;
+    std::size_t last_score;
     GameController controller;
     Sound eat_sound;
     Sound wall_sound;

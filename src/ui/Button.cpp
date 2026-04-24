@@ -6,11 +6,20 @@ Button::Button(Rectangle bounds, std::string text, int text_size)
 void Button::draw(const Color &accent_color,
                   const Color &surface_color,
                   bool selected) const {
-    Color fill_color = selected ? accent_color : Fade(accent_color, 0.15f);
+    const float idle_fill_alpha = 0.15f;
+    const float corner_roundness = 0.2f;
+    const int corner_segments = 8;
+    const float border_thickness = 2.0f;
+
+    Color fill_color = selected ? accent_color : Fade(accent_color, idle_fill_alpha);
     Color text_color = selected ? surface_color : accent_color;
 
-    DrawRectangleRounded(bounds, 0.2f, 8, fill_color);
-    DrawRectangleRoundedLinesEx(bounds, 0.2f, 8, 2.0f, accent_color);
+    DrawRectangleRounded(bounds, corner_roundness, corner_segments, fill_color);
+    DrawRectangleRoundedLinesEx(bounds,
+                                corner_roundness,
+                                corner_segments,
+                                border_thickness,
+                                accent_color);
 
     int text_x = (int)(bounds.x + (bounds.width - (float)MeasureText(text.c_str(), text_size)) / 2.0f);
     int text_y = (int)(bounds.y + (bounds.height - (float)text_size) / 2.0f);
